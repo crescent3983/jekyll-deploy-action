@@ -20,6 +20,8 @@ PRE_BUILD_COMMANDS=${INPUT_PRE_BUILD_COMMANDS:=}
 # Set default bundle path and cache
 BUNDLE_PATH=${WORKING_DIR}/vendor/bundle
 
+GITHUB_CONFIG="./_github.yml"
+
 echo "Starting the Jekyll Deploy Action"
 
 if [[ -z "${TOKEN}" ]]; then
@@ -91,11 +93,14 @@ if [[ -n "${JEKYLL_BASEURL-}" ]]; then
   JEKYLL_BASEURL="--baseurl ${JEKYLL_BASEURL}"
 fi
 
+# Create _github.yml
+echo "github_token: ${TOKEN}" > $GITHUB_CONFIG
+
 build_jekyll() {
   echo "Starting jekyll build"
   JEKYLL_ENV=production bundle exec jekyll build \
     ${JEKYLL_BASEURL} \
-    -c ${JEKYLL_CFG} \
+    -c ${JEKYLL_CFG},${GITHUB_CONFIG} \
     -d ${WORKING_DIR}/build
 }
 
